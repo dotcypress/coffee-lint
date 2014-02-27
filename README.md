@@ -1,4 +1,5 @@
-coffee-lint
-===========
+# coffee-lint package
 
-Coffee linter for Atom editor
+Coffee script linter
+
+* `cmd-l` lint coffee script

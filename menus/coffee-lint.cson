@@ -1,0 +1,9 @@
+'menu': [
+  {
+    'label': 'Packages'
+    'submenu': [
+      'label': 'Lint coffee script',
+      'command': 'coffee-lint:lint'
+    ]
+  }
+]
