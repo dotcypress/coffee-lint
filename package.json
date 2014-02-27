@@ -3,9 +3,8 @@
   "main": "./lib/coffee-lint",
   "version": "0.0.0",
   "private": true,
-  "description": "A short description of your package",
-
-  "repository": "https://github.com/atom/coffee-lint",
+  "description": "CoffeeScript linter",
+  "repository": "https://github.com/dotcypress/coffee-lint",
   "license": "MIT",
   "engines": {
     "atom": ">0.50.0"
