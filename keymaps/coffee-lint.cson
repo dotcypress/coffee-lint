@@ -1,2 +1,5 @@
-'.editor':
+'.platform-darwin, .platform-darwin .command-palette .editor':
+  'cmd-l': 'coffee-lint:lint'
+
+'.platform-win32, .platform-win32 .command-palette .editor':
   'cmd-l': 'coffee-lint:lint'

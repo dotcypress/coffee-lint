@@ -1,6 +1,6 @@
 {
   "name": "coffee-lint",
-  "main": "./lib/coffee-lint",
+  "main": "./lib/main",
   "version": "0.1.0",
   "private": true,
   "description": "CoffeeScript linter",
@@ -10,6 +10,7 @@
     "atom": ">0.50.0"
   },
   "dependencies": {
-    "coffee-script": "~1.7.1"
+    "coffee-script": "~1.7.1",
+    "emissary": "1.x"
   }
 }
