@@ -45,6 +45,7 @@ module.exports =
       @resultView?.destroy()
 
       gutter.removeClassFromAllLines 'coffee-error'
+      gutter.removeClassFromAllLines 'coffee-warn'
       source = editor.getText()
       try
         config = JSON.parse atom.config.get('coffee-lint.config')
