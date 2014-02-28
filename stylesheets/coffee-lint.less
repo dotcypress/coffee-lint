@@ -1,11 +1,22 @@
 @import "octicon-utf-codes.less";
 
-.editor .gutter .line-number.coffee-error .icon-right {
-  visibility: visible;
+.editor .gutter .line-number {
+  &.coffee-error .icon-right {
+    visibility: visible;
 
-  &:before {
-    content: @alert;
-    color: #F22;
+    &:before {
+      content: @alert;
+      color: #F22;
+    }
+  }
+
+  &.coffee-warn .icon-right {
+    visibility: visible;
+
+    &:before {
+      content: @info;
+      color: #B89C02;
+    }
   }
 }
 
@@ -13,12 +24,24 @@
   height: 150px;
   overflow-y: scroll;
 
-  .error-item{
+  .result-item{
     cursor: pointer;
-    color: #F77;
 
-    &:hover {
-      color: #F44;
+    &.lint-error{
+      color: #F77;
+
+      &:hover {
+        color: #F44;
+      }
     }
+
+    &.lint-warn{
+      color: #B89C02;
+
+      &:hover {
+        color: #D1B204;
+      }
+    }
+
   }
 }

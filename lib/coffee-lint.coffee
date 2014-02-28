@@ -17,7 +17,7 @@ module.exports =
       atom.workspaceView.eachEditorView (editorView) =>
         @handleBufferEvents editorView
 
-    deactivate: () ->
+    deactivate: ->
       tom.workspaceView.off 'core:cancel core:close'
       tom.workspaceView.off 'pane-container:active-pane-item-changed'
 
@@ -31,8 +31,10 @@ module.exports =
       @subscribe buffer, 'will-be-saved', =>
         buffer.transact =>
           if atom.config.get('coffee-lint.lintOnSave')
-            @lint editorView, null, true
-
+            try
+              @lint editorView, null, true
+            catch e
+              console.log e
       @subscribe buffer, 'destroyed', =>
         @unsubscribe(buffer)
 
@@ -44,10 +46,14 @@ module.exports =
 
       gutter.removeClassFromAllLines 'coffee-error'
       source = editor.getText()
-      errors = coffeelinter.lint source
+      try
+        config = JSON.parse atom.config.get('coffee-lint.config')
+      catch e
+        console.log e
+      errors = coffeelinter.lint source, config
       return if errors.length is 0
       @resultView = new ResultView(errors)
       @resultView.render errors, editorView
       atom.workspaceView.prependToBottom @resultView
       for error in errors
-        gutter.addClassToLine error.lineNumber - 1, 'coffee-error'
+        gutter.addClassToLine error.lineNumber - 1, "coffee-#{error.level}"
