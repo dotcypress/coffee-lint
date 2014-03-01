@@ -1,6 +1,7 @@
 {Subscriber} = require 'emissary'
 ResultView = require './result-view'
 coffeelinter = require './vendor/linter'
+fs = require 'fs'
 
 module.exports =
 
@@ -49,7 +50,13 @@ module.exports =
       gutter.removeClassFromAllLines 'coffee-warn'
       source = editor.getText()
       try
-        config = JSON.parse atom.config.get('coffee-lint.config')
+        localFile = atom.project.path + '/coffeelint.json'
+        configFile = if fs.existsSync(localFile)
+          fs.readFileSync(localFile,'UTF8')
+        else atom.config.get('coffee-lint.config')
+
+        config = JSON.parse configFile
+
       catch e
         console.log e
       errors = coffeelinter.lint source, config
