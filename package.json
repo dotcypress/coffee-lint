@@ -5,6 +5,11 @@
   "private": true,
   "description": "CoffeeScript linter",
   "repository": "https://github.com/dotcypress/coffee-lint",
+  "author": {
+    "name": "Vitaly Domnikov",
+    "email": "dotcypress@gmail.com",
+    "url": "http://dotcypress.github.io"
+  },
   "license": "MIT",
   "engines": {
     "atom": ">0.50.0"

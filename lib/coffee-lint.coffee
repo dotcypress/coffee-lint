@@ -28,7 +28,7 @@ module.exports =
       buffer = editorView.editor.getBuffer()
       @lint editorView
 
-      @subscribe buffer, 'will-be-saved', =>
+      @subscribe buffer, 'saved', =>
         buffer.transact =>
           if atom.config.get('coffee-lint.lintOnSave')
             try
@@ -40,6 +40,7 @@ module.exports =
 
     lint: (editorView) ->
       {editor, gutter} = editorView
+      return unless editor
       return if editor.getGrammar().scopeName isnt "source.coffee"
 
       @resultView?.destroy()

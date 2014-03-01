@@ -1,7 +1,8 @@
-# coffee-lint package
+# coffee-lint
 
-Coffee script linter
+Coffee script linter for Atom editor
 
-* `cmd-l` lint coffee script
+* `cmd-cntl-l` lint coffee script
+
 
 ![](https://raw.github.com/dotcypress/coffee-lint/master/screenshot.png)
