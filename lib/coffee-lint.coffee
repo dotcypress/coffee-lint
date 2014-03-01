@@ -50,13 +50,11 @@ module.exports =
       gutter.removeClassFromAllLines 'coffee-warn'
       source = editor.getText()
       try
-        localFile = atom.project.path + '/coffeelint.json'
-        configFile = if fs.existsSync(localFile)
-          fs.readFileSync(localFile,'UTF8')
-        else atom.config.get('coffee-lint.config')
-
-        config = JSON.parse configFile
-
+        localFile = "#{atom.project.path}/coffeelint.json"
+        configObject = atom.config.get 'coffee-lint.config'
+        if fs.existsSync localFile
+          configObject = fs.readFileSync localFile, 'UTF8'
+        config = JSON.parse configObject
       catch e
         console.log e
       errors = coffeelinter.lint source, config
