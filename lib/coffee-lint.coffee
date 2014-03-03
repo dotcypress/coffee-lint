@@ -28,27 +28,35 @@ module.exports =
 
     handleBufferEvents: (editorView) ->
       buffer = editorView.editor.getBuffer()
-      @lint editorView
+      @lint editorView, false
 
       @subscribe buffer, 'saved', =>
         buffer.transact =>
           if atom.config.get('coffee-lint.lintOnSave')
             try
-              @lint editorView, null, true
+              @lint editorView
             catch e
               console.log e
+
+      editorView.editor.on 'contents-modified', =>
+        if atom.config.get('coffee-lint.continuousLint')
+          try
+            @lint editorView, false
+          catch e
+            console.log e
+
       @subscribe buffer, 'destroyed', =>
         @unsubscribe(buffer)
 
-    lint: (editorView) ->
+
+    lint: (editorView, showPanel = true) ->
       {editor, gutter} = editorView
       return unless editor
       return if editor.getGrammar().scopeName isnt "source.coffee"
 
-      @resultView?.destroy()
-
       gutter.removeClassFromAllLines 'coffee-error'
       gutter.removeClassFromAllLines 'coffee-warn'
+      gutter.find('.line-number .icon-right').attr 'title', ''
       source = editor.getText()
       try
         localFile = path.join atom.project.path, 'coffeelint.json'
@@ -59,11 +67,12 @@ module.exports =
       catch e
         console.log e
       errors = coffeelinter.lint source, config
-      return if errors.length is 0
-      @resultView = new ResultView(errors)
-      @resultView.render errors, editorView
-      atom.workspaceView.prependToBottom @resultView
       for error in errors
         row = gutter.find gutter.getLineNumberElement(error.lineNumber - 1)
-        row.attr 'title', error.message
+        row.find('.icon-right').attr 'title', error.message
         row.addClass "coffee-#{error.level}"
+
+      @resultView?.destroy() if errors.length is 0
+      @resultView = @resultView or new ResultView()
+      @resultView.render errors, editorView
+      atom.workspaceView.prependToBottom @resultView if showPanel

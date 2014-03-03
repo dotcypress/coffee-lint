@@ -3,7 +3,8 @@ CoffeeLint = require './coffee-lint'
 module.exports =
 
   configDefaults:
-    lintOnSave: true
+    lintOnSave: true,
+    continuousLint: true,
     config:'{
         "coffeescript_error": {
             "level": "error"
