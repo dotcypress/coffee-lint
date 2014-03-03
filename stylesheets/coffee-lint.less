@@ -1,12 +1,13 @@
 @import "octicon-utf-codes.less";
+@import "ui-variables.less";
 
 .editor .gutter .line-number {
   &.coffee-error .icon-right {
     visibility: visible;
 
-    &:before {
+  &:before {
       content: @alert;
-      color: #F22;
+      color: @text-color-error;
     }
   }
 
@@ -15,7 +16,7 @@
 
     &:before {
       content: @info;
-      color: #B89C02;
+      color: @text-color-warning;
     }
   }
 }
@@ -28,18 +29,18 @@
     cursor: pointer;
 
     &.lint-error{
-      color: #F77;
+      color: fade(@text-color-error, 70%);
 
       &:hover {
-        color: #F44;
+        color: @text-color-error;
       }
     }
 
     &.lint-warn{
-      color: #B89C02;
+      color: fade(@text-color-warning, 70%);
 
       &:hover {
-        color: #D1B204;
+        color: @text-color-warning;
       }
     }
 

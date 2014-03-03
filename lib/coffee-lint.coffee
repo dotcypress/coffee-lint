@@ -2,6 +2,7 @@
 ResultView = require './result-view'
 coffeelinter = require './vendor/linter'
 fs = require 'fs'
+path = require 'path'
 
 module.exports =
 
@@ -50,7 +51,7 @@ module.exports =
       gutter.removeClassFromAllLines 'coffee-warn'
       source = editor.getText()
       try
-        localFile = "#{atom.project.path}/coffeelint.json"
+        localFile = path.join atom.project.path, 'coffeelint.json'
         configObject = atom.config.get 'coffee-lint.config'
         if fs.existsSync localFile
           configObject = fs.readFileSync localFile, 'UTF8'
@@ -63,4 +64,6 @@ module.exports =
       @resultView.render errors, editorView
       atom.workspaceView.prependToBottom @resultView
       for error in errors
-        gutter.addClassToLine error.lineNumber - 1, "coffee-#{error.level}"
+        row = gutter.find gutter.getLineNumberElement(error.lineNumber - 1)
+        row.attr 'title', error.message
+        row.addClass "coffee-#{error.level}"
