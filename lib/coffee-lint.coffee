@@ -7,7 +7,7 @@ path = require 'path'
 module.exports =
 
   class CoffeeLint
-    Subscriber.includeInto(this)
+    Subscriber.includeInto this
 
     constructor: ->
       atom.workspaceView.command "coffee-lint:lint", =>
@@ -32,21 +32,21 @@ module.exports =
 
       @subscribe buffer, 'saved', =>
         buffer.transact =>
-          if atom.config.get('coffee-lint.lintOnSave')
+          if atom.config.get 'coffee-lint.lintOnSave'
             try
               @lint editorView
             catch e
               console.log e
 
       editorView.editor.on 'contents-modified', =>
-        if atom.config.get('coffee-lint.continuousLint')
+        if atom.config.get 'coffee-lint.continuousLint'
           try
             @lint editorView, false
           catch e
             console.log e
 
       @subscribe buffer, 'destroyed', =>
-        @unsubscribe(buffer)
+        @unsubscribe buffer
 
 
     lint: (editorView, showPanel = true) ->
