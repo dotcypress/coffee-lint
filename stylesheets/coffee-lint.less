@@ -21,28 +21,31 @@
   }
 }
 
-.coffee-lint .panel-body{
-  height: 150px;
-  overflow-y: scroll;
+.coffee-lint {
+  margin-bottom: 0;
 
-  .result-item{
-    cursor: pointer;
+  .panel-body {
+    height: 150px;
+    overflow-y: scroll;
 
-    &.lint-error{
-      color: fade(@text-color-error, 70%);
+    .result-item {
+      cursor: pointer;
 
-      &:hover {
-        color: @text-color-error;
+      &.lint-error {
+        color: fade(@text-color-error, 70%);
+
+        &:hover {
+          color: @text-color-error;
+        }
+      }
+
+      &.lint-warn {
+        color: fade(@text-color-warning, 70%);
+
+        &:hover {
+          color: @text-color-warning;
+        }
       }
     }
-
-    &.lint-warn{
-      color: fade(@text-color-warning, 70%);
-
-      &:hover {
-        color: @text-color-warning;
-      }
-    }
-
   }
 }

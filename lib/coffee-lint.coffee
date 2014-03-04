@@ -75,4 +75,4 @@ module.exports =
       @resultView?.destroy() if errors.length is 0
       @resultView = @resultView or new ResultView()
       @resultView.render errors, editorView
-      atom.workspaceView.prependToBottom @resultView if showPanel
+      atom.workspaceView.prependToBottom @resultView if errors.length isnt 0 and showPanel

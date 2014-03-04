@@ -4,8 +4,9 @@ module.exports =
 class ResultView extends View
 
   @content: ->
-    @div class: 'coffee-lint tool-panel panel-bottom', =>
-      @div class: 'panel-body padded', =>
+    @div class: "panel coffee-lint", =>
+      @div class: "panel-heading", 'Coffee Lint'
+      @div class: "panel-body", =>
         @ul outlet: 'errorList', class: 'list-group'
 
   serialize: ->
