@@ -3,6 +3,7 @@ ResultView = require './result-view'
 coffeelinter = require './vendor/linter'
 fs = require 'fs'
 path = require 'path'
+_ = require 'underscore-plus'
 
 module.exports =
 
@@ -10,50 +11,54 @@ module.exports =
     Subscriber.includeInto this
 
     constructor: ->
-      atom.workspaceView.command "coffee-lint:lint", =>
-        @lint atom.workspaceView.getActiveView()
-      atom.workspaceView.on 'core:cancel core:close', (event) =>
-        @resultView?.detach()
+      @resultView = new ResultView()
+      atom.workspaceView.command "coffee-lint:lint-current-file", =>
+        @lint()
+      atom.workspaceView.command "coffee-lint:toggle-results-panel", =>
+        if @resultView.hasParent()
+          @resultView.detach()
+        else
+          atom.workspaceView.prependToBottom @resultView
+          @lint()
+
       atom.workspaceView.on 'pane-container:active-pane-item-changed', =>
-        @resultView?.detach()
+        @lint() if @resultView.hasParent()
       atom.workspaceView.eachEditorView (editorView) =>
         @handleBufferEvents editorView
 
     deactivate: ->
-      tom.workspaceView.off 'core:cancel core:close'
-      tom.workspaceView.off 'pane-container:active-pane-item-changed'
+      atom.workspaceView.off 'core:cancel core:close'
+      atom.workspaceView.off 'pane-container:active-pane-item-changed'
 
     destroy: ->
       @unsubscribe()
 
     handleBufferEvents: (editorView) ->
       buffer = editorView.editor.getBuffer()
-      @lint editorView, false
+      @lint editorView
 
-      @subscribe buffer, 'saved', =>
-        buffer.transact =>
-          if atom.config.get 'coffee-lint.lintOnSave'
-            try
-              @lint editorView
-            catch e
-              console.log e
+      @subscribe buffer, 'saved', (buffer) ->
+        if buffer.previousModifiedStatus and atom.config.get 'coffee-lint.lintOnSave'
+          try
+            @lint editorView
+          catch e
+            console.log e
 
       editorView.editor.on 'contents-modified', =>
         if atom.config.get 'coffee-lint.continuousLint'
           try
-            @lint editorView, false
+            @lint editorView
           catch e
             console.log e
 
       @subscribe buffer, 'destroyed', =>
         @unsubscribe buffer
 
-
-    lint: (editorView, showPanel = true) ->
+    lint: (editorView = atom.workspaceView.getActiveView()) ->
+      return if editorView.coffeeLintPending
       {editor, gutter} = editorView
-      return unless editor
-      return if editor.getGrammar().scopeName isnt "source.coffee"
-
+      return @resultView.render() if not editor or editor.getGrammar().scopeName isnt "source.coffee"
+      editorView.coffeeLintPending = yes
       gutter.removeClassFromAllLines 'coffee-error'
       gutter.removeClassFromAllLines 'coffee-warn'
       gutter.find('.line-number .icon-right').attr 'title', ''
@@ -67,12 +72,11 @@ module.exports =
       catch e
         console.log e
       errors = coffeelinter.lint source, config
+      errors = _.sortBy errors, 'level'
       for error in errors
         row = gutter.find gutter.getLineNumberElement(error.lineNumber - 1)
         row.find('.icon-right').attr 'title', error.message
         row.addClass "coffee-#{error.level}"
 
-      @resultView?.destroy() if errors.length is 0
-      @resultView = @resultView or new ResultView()
       @resultView.render errors, editorView
-      atom.workspaceView.prependToBottom @resultView if errors.length isnt 0 and showPanel
+      editorView.coffeeLintPending = no

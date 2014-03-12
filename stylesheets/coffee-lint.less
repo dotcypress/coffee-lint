@@ -24,14 +24,39 @@
 .coffee-lint {
   margin-bottom: 0;
 
+  .close-icon {
+
+    &:before {
+      font-family: 'Octicons Regular';
+      -webkit-font-smoothing: antialiased;
+      width: 12px;
+      content: "\f081";
+    }
+
+    &:hover {
+      color: @text-color-highlight;
+    }
+  }
+
+  .background-message {
+    padding-top: 40px;
+    text-align: center;
+  }
+
   .panel-body {
     height: 150px;
+    padding: 0;
     overflow-y: scroll;
 
-    .result-item {
+    .list-item {
       cursor: pointer;
+      padding: 0 @component-padding;
 
-      &.lint-error {
+      &:hover {
+        background: @background-color-highlight;
+      }
+
+      &.lint-error .icon {
         color: fade(@text-color-error, 70%);
 
         &:hover {
@@ -39,7 +64,7 @@
         }
       }
 
-      &.lint-warn {
+      &.lint-warn .icon{
         color: fade(@text-color-warning, 70%);
 
         &:hover {

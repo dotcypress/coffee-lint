@@ -2,8 +2,14 @@
   {
     'label': 'Packages'
     'submenu': [
-      'label': 'Lint coffee script',
-      'command': 'coffee-lint:lint'
+      'label': 'Coffee Lint'
+      'submenu': [
+        'label': 'Lint Current File'
+        'command': 'coffee-lint:lint-current-file'
+        ,
+          'label': 'Toggle results panel'
+          'command': 'coffee-lint:toggle-results-panel'
+      ]
     ]
   }
 ]

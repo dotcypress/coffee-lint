@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "coffee-script": "~1.7.1",
-    "emissary": "1.x"
+    "emissary": "1.x",
+    "underscore-plus": "~1.0.5"
   }
 }

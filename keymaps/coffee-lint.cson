@@ -1,5 +1,7 @@
 '.platform-darwin .editor:not(.mini)':
-  'cmd-ctrl-l': 'coffee-lint:lint'
+  'cmd-ctrl-l': 'coffee-lint:lint-current-file'
+  'cmd-ctrl-shift-l': 'coffee-lint:toggle-results-panel'
 
 '.platform-win32 .editor:not(.mini)':
-  'cmd-ctrl-l': 'coffee-lint:lint'
+  'cmd-ctrl-l': 'coffee-lint:lint-current-file'
+  'cmd-ctrl-shift-l': 'coffee-lint:toggle-results-panel'
