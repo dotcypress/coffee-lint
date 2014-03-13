@@ -1,126 +1,98 @@
-CoffeeLint = require './coffee-lint'
+ResultView = require './result-view'
+coffeelinter = require './vendor/linter'
+fs = require 'fs'
+path = require 'path'
+_ = require 'underscore-plus'
+
+resultView = null
+
+activate = (state) ->
+  resultView = new ResultView(state)
+
+  atom.workspaceView.command "coffee-lint:lint-current-file", ->
+    lint()
+
+  atom.workspaceView.command "coffee-lint:toggle-results-panel", ->
+    return unless resultView
+    if resultView.hasParent()
+      resultView.detach()
+    else
+      atom.workspaceView.prependToBottom resultView
+      lint()
+
+  atom.workspaceView.on 'pane-container:active-pane-item-changed', ->
+    lint() if resultView.hasParent()
+
+  atom.workspaceView.eachEditorView (editorView) ->
+    handleBufferEvents editorView
+
+deactivate = ->
+  atom.workspaceView.off 'core:cancel core:close'
+  atom.workspaceView.off 'pane-container:active-pane-item-changed'
+  atom.workspaceView.command "coffee-lint:lint-current-file", ->
+  atom.workspaceView.command "coffee-lint:toggle-results-panel", ->
+  resultView.detach()
+  resultView = null
+
+serialize = ->
+  resultView.serialize()
+
+handleBufferEvents = (editorView) ->
+  buffer = editorView.editor.getBuffer()
+  lint editorView
+
+  buffer.on 'saved', (buffer) ->
+    lintOnSave = atom.config.get 'coffee-lint.lintOnSave'
+    if buffer.previousModifiedStatus and lintOnSave
+      try
+        lint editorView
+      catch e
+        console.log e
+
+  buffer.on 'destroyed', ->
+    buffer.off 'saved'
+    buffer.off 'destroyed'
+
+  editorView.editor.on 'contents-modified', ->
+    if atom.config.get 'coffee-lint.continuousLint'
+      try
+        lint editorView
+      catch e
+        console.log e
+
+lint = (editorView = atom.workspaceView.getActiveView()) ->
+  return if editorView.coffeeLintPending
+  {editor, gutter} = editorView
+  return unless editor
+  isCoffeeFile = editor.getGrammar().scopeName is "source.coffee"
+  return resultView.render() unless isCoffeeFile
+  editorView.coffeeLintPending = yes
+  gutter.removeClassFromAllLines 'coffee-error'
+  gutter.removeClassFromAllLines 'coffee-warn'
+  gutter.find('.line-number .icon-right').attr 'title', ''
+  source = editor.getText()
+  try
+    localFile = path.join atom.project.path, 'coffeelint.json'
+    configObject = {}
+    if fs.existsSync localFile
+      configObject = fs.readFileSync localFile, 'UTF8'
+      config = JSON.parse configObject
+  catch e
+    console.log e
+  errors = coffeelinter.lint source, config
+  errors = _.sortBy errors, 'level'
+  for error in errors
+    row = gutter.find gutter.getLineNumberElement(error.lineNumber - 1)
+    row.find('.icon-right').attr 'title', error.message
+    row.addClass "coffee-#{error.level}"
+
+  resultView.render errors, editorView
+  editorView.coffeeLintPending = no
 
 module.exports =
-
   configDefaults:
     lintOnSave: true,
     continuousLint: true,
-    config:'{
-        "coffeescript_error": {
-            "level": "error"
-        },
-        "arrow_spacing": {
-            "name": "arrow_spacing",
-            "level": "warn"
-        },
-        "no_tabs": {
-            "name": "no_tabs",
-            "level": "error"
-        },
-        "no_trailing_whitespace": {
-            "name": "no_trailing_whitespace",
-            "level": "error",
-            "allowed_in_comments": false,
-            "allowed_in_empty_lines": true
-        },
-        "max_line_length": {
-            "name": "max_line_length",
-            "value": 80,
-            "level": "error",
-            "limitComments": true
-        },
-        "line_endings": {
-            "name": "line_endings",
-            "level": "warn",
-            "value": "unix"
-        },
-        "no_trailing_semicolons": {
-            "name": "no_trailing_semicolons",
-            "level": "error"
-        },
-        "indentation": {
-            "name": "indentation",
-            "value": 2,
-            "level": "error"
-        },
-        "camel_case_classes": {
-            "name": "camel_case_classes",
-            "level": "error"
-        },
-        "colon_assignment_spacing": {
-            "name": "colon_assignment_spacing",
-            "level": "ignore",
-            "spacing": {
-                "left": 0,
-                "right": 0
-            }
-        },
-        "no_implicit_braces": {
-            "name": "no_implicit_braces",
-            "level": "ignore",
-            "strict": false
-        },
-        "no_plusplus": {
-            "name": "no_plusplus",
-            "level": "warn"
-        },
-        "no_throwing_strings": {
-            "name": "no_throwing_strings",
-            "level": "error"
-        },
-        "no_backticks": {
-            "name": "no_backticks",
-            "level": "error"
-        },
-        "no_implicit_parens": {
-            "name": "no_implicit_parens",
-            "level": "ignore"
-        },
-        "no_empty_param_list": {
-            "name": "no_empty_param_list",
-            "level": "warn"
-        },
-        "no_stand_alone_at": {
-            "name": "no_stand_alone_at",
-            "level": "warn"
-        },
-        "space_operators": {
-            "name": "space_operators",
-            "level": "warn"
-        },
-        "duplicate_key": {
-            "name": "duplicate_key",
-            "level": "error"
-        },
-        "empty_constructor_needs_parens": {
-            "name": "empty_constructor_needs_parens",
-            "level": "warn"
-        },
-        "cyclomatic_complexity": {
-            "name": "cyclomatic_complexity",
-            "value": 10,
-            "level": "warn"
-        },
-        "newlines_after_classes": {
-            "name": "newlines_after_classes",
-            "value": 3,
-            "level": "warn"
-        },
-        "no_unnecessary_fat_arrows": {
-            "name": "no_unnecessary_fat_arrows",
-            "level": "warn"
-        },
-        "missing_fat_arrows": {
-            "name": "missing_fat_arrows",
-            "level": "ignore"
-        },
-        "non_empty_constructor_needs_parens": {
-            "name": "non_empty_constructor_needs_parens",
-            "level": "warn"
-        }
-    }'
-  activate: =>
-    @linter = new CoffeeLint()
-
-  deactivate: =>
-    @linter.destroy()
+  activate: activate
+  deactivate: deactivate
+  serialize: serialize

@@ -22,53 +22,69 @@
 }
 
 .coffee-lint {
-  margin-bottom: 0;
+  display: -webkit-flex;
+  -webkit-flex-direction: column;
 
-  .close-icon {
-
-    &:before {
-      font-family: 'Octicons Regular';
-      -webkit-font-smoothing: antialiased;
-      width: 12px;
-      content: "\f081";
-    }
-
-    &:hover {
-      color: @text-color-highlight;
-    }
+  .resize-handle {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 10px;
+    cursor: row-resize;
   }
 
-  .background-message {
-    padding-top: 40px;
-    text-align: center;
-  }
+  .panel {
+    -webkit-flex-grow: 1;
+    display: -webkit-flex;
+    -webkit-flex-direction: column;
+    margin: 0;
 
-  .panel-body {
-    height: 150px;
-    padding: 0;
-    overflow-y: scroll;
+    .close-icon {
 
-    .list-item {
-      cursor: pointer;
-      padding: 0 @component-padding;
+      &:before {
+        font-family: 'Octicons Regular';
+        -webkit-font-smoothing: antialiased;
+        width: 12px;
+        content: "\f081";
+      }
 
       &:hover {
-        background: @background-color-highlight;
+        color: @text-color-highlight;
       }
+    }
 
-      &.lint-error .icon {
-        color: fade(@text-color-error, 70%);
+    .background-message {
+      padding-top: 20px;
+      text-align: center;
+    }
+
+    .panel-body {
+      -webkit-flex-grow: 1;
+      padding: 0;
+      overflow-y: scroll;
+
+      .list-item {
+        cursor: pointer;
+        padding: 0 @component-padding;
 
         &:hover {
-          color: @text-color-error;
+          background: @background-color-highlight;
         }
-      }
 
-      &.lint-warn .icon{
-        color: fade(@text-color-warning, 70%);
+        &.lint-error .icon {
+          color: fade(@text-color-error, 70%);
 
-        &:hover {
-          color: @text-color-warning;
+          &:hover {
+            color: @text-color-error;
+          }
+        }
+
+        &.lint-warn .icon{
+          color: fade(@text-color-warning, 70%);
+
+          &:hover {
+            color: @text-color-warning;
+          }
         }
       }
     }
