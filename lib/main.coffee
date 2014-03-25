@@ -61,7 +61,7 @@ handleBufferEvents = (editorView) ->
         console.log e
 
 lint = (editorView = atom.workspaceView.getActiveView()) ->
-  return if editorView.coffeeLintPending
+  return if editorView?.coffeeLintPending
   {editor, gutter} = editorView
   return unless editor
   isCoffeeFile = editor.getGrammar().scopeName is "source.coffee"
