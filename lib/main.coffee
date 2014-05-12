@@ -64,7 +64,8 @@ lint = (editorView = atom.workspaceView.getActiveView()) ->
   return if editorView?.coffeeLintPending
   {editor, gutter} = editorView
   return unless editor
-  isCoffeeFile = editor.getGrammar().scopeName is "source.coffee"
+  isLitCoffeeFile = editor.getGrammar().scopeName is "source.litcoffee"
+  isCoffeeFile = editor.getGrammar().scopeName is "source.coffee" or isLitCoffeeFile
   return resultView.render() unless isCoffeeFile
   editorView.coffeeLintPending = yes
   gutter.removeClassFromAllLines 'coffee-error'
@@ -79,7 +80,7 @@ lint = (editorView = atom.workspaceView.getActiveView()) ->
       config = JSON.parse configObject
   catch e
     console.log e
-  errors = coffeelinter.lint source, config
+  errors = coffeelinter.lint source, config, isLitCoffeeFile
   errors = _.sortBy errors, 'level'
   for error in errors
     row = gutter.find gutter.getLineNumberElement(error.lineNumber - 1)
