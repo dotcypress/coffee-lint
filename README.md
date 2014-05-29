@@ -5,6 +5,10 @@ Coffee script linter for Atom editor
 * `cmd-ctrl-l` - lint current file
 * `cmd-ctrl-shift-l` - toggle results panel
 
+Windows and Linux:
+* `alt-ctrl-l` - lint current file
+* `alt-ctrl-shift-l` - toggle results panel
+
 ## Configuration
 You can change lint options by adding coffeelint.json file in root of project.
 
