@@ -2,6 +2,6 @@
   'cmd-ctrl-l': 'coffee-lint:lint-current-file'
   'cmd-ctrl-shift-l': 'coffee-lint:toggle-results-panel'
 
-'.platform-win32 .editor:not(.mini)':
-  'cmd-ctrl-l': 'coffee-lint:lint-current-file'
-  'cmd-ctrl-shift-l': 'coffee-lint:toggle-results-panel'
+'.platform-win32 .editor:not(.mini), .platform-linux .editor:not(.mini)':
+  'alt-ctrl-l': 'coffee-lint:lint-current-file'
+  'alt-ctrl-shift-l': 'coffee-lint:toggle-results-panel'
