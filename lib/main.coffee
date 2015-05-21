@@ -73,7 +73,7 @@ lint = (editorView = atom.workspaceView.getActiveView()) ->
   gutter.find('.line-number .icon-right').attr 'title', ''
   source = editor.getText()
   try
-    localFile = path.join atom.project.path, 'coffeelint.json'
+    localFile = path.join atom.project.getPath(), 'coffeelint.json'
     configObject = {}
     if fs.existsSync localFile
       configObject = fs.readFileSync localFile, 'UTF8'
